@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import Header from './Header.js';
 import Home from './Home.js';
-import Weather from './Weather.js';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
 } from "react-router-dom";
+import Weather from './Weather.js';
 
 class App extends Component {
   render() {
