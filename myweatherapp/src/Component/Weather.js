@@ -37,13 +37,26 @@ export class Weather extends Component {
     }
   }
 
+  researchHandler = (lat,lon) => {
+    this.setState({weatherData:null}, ()=>{
+      this.setState({lat,lon}, ()=>{
+        axios.get('https://api.openweathermap.org/data/2.5/weather?lat=${this.state.lat}&lon=${this.state.on}&appid={API key}')
+        .then((result => {
+          this.state({
+            city: result.data.name,
+            weatherData: result.data,
+          });
+        }))
+        .catch((error => {
+          console.log(error);
+        }));
+      })
+    })
+  }
+
   searchHandler = () => {
     this.setState({
-      lat: '',
-      lon: '',
-      city: '',
-      isSearched:true,
-      weatherData: null,
+      weatherData:null,
     })
     axios.get('https://api.openweathermap.org/data/2.5/weather?lat=${this.state.lat}&lon=${this.state.on}&appid={API key}')
       .then((result => {
@@ -68,8 +81,14 @@ export class Weather extends Component {
       city: this.state.city,
     })
     this.setState({recent}, ()=>{
-      console.log(this.state);
+      window.localStorage.setItem('recent', JSON.stringify(this.state.recent))
     });
+  }
+
+  componentDidMount(){
+    const data = window.localStorage.getItem('recent');
+    let recent = data === null ? [] : JSON.parse(data);
+    this.setState({recent})
   }
 
   locationHandler = () => {
@@ -117,7 +136,8 @@ export class Weather extends Component {
   render() {
     return (
       <div className='container pt-4 ' style={{height: '500px'}}>
-        <Recent recent={this.state.recent}  />
+        <Recent recent={this.state.recent}
+        research={this.researchHandler}  />
         <Search
           lat={this.state.lat}
           lon={this.state.lon}
